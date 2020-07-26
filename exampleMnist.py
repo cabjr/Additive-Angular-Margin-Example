@@ -15,7 +15,6 @@ nb_epoch = 50
 weight_decay = 1e-4
 
 
-
 def vgg_block(x, filters, layers):
     for _ in range(layers):
         x = Conv2D(filters, (3, 3), padding='same', kernel_initializer='he_normal',
@@ -55,9 +54,9 @@ output = ArcNorm(10, regularizer=regularizers.l2(weight_decay))([x, y_in])
 model = Model(inputs=[input,y_in], outputs=output)
 model.summary()
 
-adam = Adam()
+opt = tf.keras.optimizers.Adam(lr=0.001)
 model.compile(loss='categorical_crossentropy',
-              optimizer=adam,
+              optimizer=opt,
               metrics=['accuracy'])
 
 history = model.fit([X,y], y,
@@ -67,6 +66,7 @@ history = model.fit([X,y], y,
                     validation_data=([X_test,y_test], y_test))
 
 score = model.evaluate([X_test, y_test], y_test, verbose=0)
-
+#model.save("./model_mnist.h5")
+model.save_weights("./weights_model_mnist.hdf5")
 print('Test score:', score[0])
 print('Test accuracy:', score[1])
